@@ -13,33 +13,32 @@ function App() {
 			id="app-root"
 			style={{ ['--accent-color' as any]: selectedSport?.color ?? 'black' }}
 		>
-			{/*
-				🐨 make Nav accept a ReactNode prop called "avatar"
-				instead of a User prop called "user"
-			*/}
-			<Nav user={user} />
+			<Nav avatar={<img src={user.image} alt={`${user.name} profile`} />} />
 			<div className="spacer" data-size="lg" />
-			{/*
-				🐨 make Main accept ReactNode props called "sidebar" and "content"
-				instead of the props it accepts right now.
-			*/}
 			<Main
-				sportList={sportList}
-				selectedSport={selectedSport}
-				setSelectedSport={setSelectedSport}
+				sidebar={
+					<List
+						listItems={sportList.map((p) => (
+							<li key={p.id}>
+								<SportListItemButton
+									sport={p}
+									onClick={() => setSelectedSport(p)}
+								/>
+							</li>
+						))}
+					/>
+				}
+				content={<Details selectedSport={selectedSport} />}
 			/>
 			<div className="spacer" data-size="lg" />
-			{/*
-				🐨 make Footer accept a String prop called "footerMessage"
-				instead of the User prop called "user"
-			*/}
-			<Footer user={user} />
+			<Footer
+				footerMessage={`Don't have a good day–have a great day, ${user.name}`}
+			/>
 		</div>
 	)
 }
 
-// 🐨 this should accept an avatar prop that's a ReactNode
-function Nav({ user }: { user: User }) {
+function Nav({ avatar }: Readonly<{ avatar: React.ReactNode }>) {
 	return (
 		<nav>
 			<ul>
@@ -54,54 +53,31 @@ function Nav({ user }: { user: User }) {
 				</li>
 			</ul>
 			<a href="#/me" title="User Settings">
-				{/* 🐨 render the avatar prop here instead of the img */}
-				<img src={user.image} alt={`${user.name} profile`} />
+				{avatar}
 			</a>
 		</nav>
 	)
 }
 
 function Main({
-	// 🐨 all these props should be removed in favor of the sidebar and content props
-	sportList,
-	selectedSport,
-	setSelectedSport,
-}: {
-	sportList: Array<SportData>
-	selectedSport: SportData | null
-	setSelectedSport: (sport: SportData) => void
-}) {
+	sidebar,
+	content,
+}: Readonly<{
+	sidebar: React.ReactNode
+	content: React.ReactNode
+}>) {
 	return (
 		<main>
-			{/* 🐨 put the sidebar and content props here */}
-			<List sportList={sportList} setSelectedSport={setSelectedSport} />
-			<Details selectedSport={selectedSport} />
+			{sidebar}
+			{content}
 		</main>
 	)
 }
 
-function List({
-	// 🐨 make this accept an array of ReactNodes called "listItems"
-	// and remove the existing props
-	sportList,
-	setSelectedSport,
-}: {
-	sportList: Array<SportData>
-	setSelectedSport: (sport: SportData) => void
-}) {
+function List({ listItems }: Readonly<{ listItems: Array<React.ReactNode> }>) {
 	return (
 		<div className="sport-list">
-			<ul>
-				{/* 🐨 render the listItems here */}
-				{sportList.map(p => (
-					<li key={p.id}>
-						<SportListItemButton
-							sport={p}
-							onClick={() => setSelectedSport(p)}
-						/>
-					</li>
-				))}
-			</ul>
+			<ul>{listItems}</ul>
 		</div>
 	)
 }
@@ -109,10 +85,10 @@ function List({
 function SportListItemButton({
 	sport,
 	onClick,
-}: {
+}: Readonly<{
 	sport: SportData
 	onClick: () => void
-}) {
+}>) {
 	return (
 		<button
 			className="sport-item"
@@ -128,7 +104,9 @@ function SportListItemButton({
 	)
 }
 
-function Details({ selectedSport }: { selectedSport: SportData | null }) {
+function Details({
+	selectedSport,
+}: Readonly<{ selectedSport: SportData | null }>) {
 	return (
 		<div className="sport-details">
 			{selectedSport ? (
@@ -140,11 +118,10 @@ function Details({ selectedSport }: { selectedSport: SportData | null }) {
 	)
 }
 
-// 🐨 make this accept a footerMessage string instead of the user
-function Footer({ user }: { user: User }) {
+function Footer({ footerMessage }: Readonly<{ footerMessage: string }>) {
 	return (
 		<footer>
-			<p>{`Don't have a good day–have a great day, ${user.name}`}</p>
+			<p>{footerMessage}</p>
 		</footer>
 	)
 }
