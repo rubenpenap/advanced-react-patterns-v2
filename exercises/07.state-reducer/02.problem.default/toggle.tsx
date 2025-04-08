@@ -3,7 +3,7 @@ import { useReducer, useRef } from 'react'
 function callAll<Args extends Array<unknown>>(
 	...fns: Array<((...args: Args) => unknown) | undefined>
 ) {
-	return (...args: Args) => fns.forEach(fn => fn?.(...args))
+	return (...args: Args) => fns.forEach((fn) => fn?.(...args))
 }
 
 type ToggleState = { on: boolean }
@@ -11,8 +11,7 @@ type ToggleAction =
 	| { type: 'toggle' }
 	| { type: 'reset'; initialState: ToggleState }
 
-// 🐨 export this
-function toggleReducer(state: ToggleState, action: ToggleAction) {
+export function toggleReducer(state: ToggleState, action: ToggleAction) {
 	switch (action.type) {
 		case 'toggle': {
 			return { on: !state.on }
