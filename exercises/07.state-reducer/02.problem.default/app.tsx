@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Switch } from '#shared/switch.tsx'
-import { useToggle } from './toggle.tsx'
-// 🐨 import the toggleReducer
+import { useToggle, toggleReducer } from './toggle.tsx'
 
 export function App() {
 	const [timesClicked, setTimesClicked] = useState(0)
@@ -9,25 +8,8 @@ export function App() {
 
 	const { on, getTogglerProps, getResetterProps } = useToggle({
 		reducer(state, action) {
-			// 🐨 add an if statement for our special logic
-			// 💰 if the action.type === 'toggle' and clickedTooMuch is true
-			// then return state
-
-			// 🐨 otherwise call the toggleReducer with the state and action
-			// and return that.
-
-			// 💣 delete this whole switch statement
-			switch (action.type) {
-				case 'toggle': {
-					if (clickedTooMuch) {
-						return state
-					}
-					return { on: !state.on }
-				}
-				case 'reset': {
-					return { on: false }
-				}
-			}
+			if (action.type === 'toggle' && clickedTooMuch) return state
+			return toggleReducer(state, action)
 		},
 	})
 
@@ -36,7 +18,7 @@ export function App() {
 			<Switch
 				{...getTogglerProps({
 					on: on,
-					onClick: () => setTimesClicked(count => count + 1),
+					onClick: () => setTimesClicked((count) => count + 1),
 				})}
 			/>
 			{clickedTooMuch ? (
