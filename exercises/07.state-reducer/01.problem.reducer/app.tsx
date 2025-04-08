@@ -7,11 +7,19 @@ export function App() {
 	const clickedTooMuch = timesClicked >= 4
 
 	const { on, getTogglerProps, getResetterProps } = useToggle({
-		// 🐨 create a reducer function here that accepts the state and action
-		// It should do almost the same thing the regular reducer does in
-		// ./toggle.tsx except in the action.type === 'toggle' case, it should check
-		// whether the toggle has been clicked too much and if it has then it should
-		// just return the state rather than make a new state object.
+		reducer(state, action) {
+			switch (action.type) {
+				case 'toggle': {
+					if (clickedTooMuch) {
+						return state
+					}
+					return { on: !state.on }
+				}
+				case 'reset': {
+					return { on: false }
+				}
+			}
+		},
 	})
 
 	return (
@@ -19,7 +27,7 @@ export function App() {
 			<Switch
 				{...getTogglerProps({
 					on: on,
-					onClick: () => setTimesClicked(count => count + 1),
+					onClick: () => setTimesClicked((count) => count + 1),
 				})}
 			/>
 			{clickedTooMuch ? (
